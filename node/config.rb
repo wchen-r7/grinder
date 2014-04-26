@@ -99,7 +99,7 @@ $opera_exe                = 'C:\\%PROGRAM_FILES_32%\\Opera\\opera.exe'
 # These options will get merged with the options in testcase.rb for use when generating a testcase via a log file (Note: not used during fuzzing).
 $testcase_opts = {
 	# surround each logged javascript line in the testcase() function with a try/catch block
-	'try_catch'                 => true,
+	'try_catch'                 => false,
 	# if a single log message just contains a comment, print it or not.
 	# Note: code snippits should be commented with /* ...code... */ while normal comment messages should be commented with // ...message...
 	'print_code_comments'       => true,
