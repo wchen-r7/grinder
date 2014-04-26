@@ -131,10 +131,27 @@ module Grinder
 						response.status          = 404
 						response['Content-Type'] = 'text/html'
 						response.body            = ''
-					elsif( request.path == '/logging.js' )
-						response.status          = 200
-						response['Content-Type'] = 'text/javascript'
-						response.body            = @@logging_js
+					elsif( request.path =~ /\/([\w\-. ]+\.js)$/ )
+						js_dir = File.expand_path($fuzzers_dir, '../', 'data', 'js')
+						if $1 == '/logging.js'
+							file_path = File.expand_path(js_dir, "logging.js")
+							@@logging_js ||= File.open(file_path, "rb") {|f| f.read}
+							response.status          = 200
+							response['Content-Type'] = 'text/javascript'
+							response.body            = @@logging_js							
+						else
+							file_path = File.join(js_dir, File.basename($1))
+							if File.exists?(file_path)
+								js_file = File.open(file_path, "rb") {|f| f.read}
+								response.status          = 200
+								response['Content-Type'] = 'text/javascript'
+								response.body            = js_file
+							end
+						end
+
+						# Nothing is found, return a 404
+						response.status = 404
+						response.body   = ''
 					elsif( request.path == '/testcase_generate' )
 						html                     = @@reductor ? @@reductor.testcase_generate : nil
 						response['Content-Type'] = 'text/html; charset=utf-8;'
@@ -250,7 +267,7 @@ module Grinder
 					end
 				end
 				
-				::File.open( './data/logging.js', 'r' ) do | f |
+				::File.open( './data/js/logging.js', 'r' ) do | f |
 					GrinderServlet.logging_js( f.read( f.stat.size ) )
 				end
 				
