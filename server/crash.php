@@ -117,7 +117,7 @@
 						$data = get_crash_data( $id );
 						if( !empty( $data ) )
 						{
-							header( 'Content-Disposition: attachment; filename=' . $filename . '' );
+							//header( 'Content-Disposition: attachment; filename=' . $filename . '' );
 							header( 'Content-Type: text/plain' );
 							echo $data;
 							exit;
