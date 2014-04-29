@@ -131,14 +131,14 @@ module Grinder
 						response.status          = 404
 						response['Content-Type'] = 'text/html'
 						response.body            = ''
-					elsif( request.path =~ /\/([\w\-. ]+\.js)$/ )
-						js_dir = File.expand_path($fuzzers_dir, '../', 'data', 'js')
-						if $1 == '/logging.js'
+					elsif( request.path =~ /\/([\w\-. _]+\.js)$/ )
+						js_dir = File.join($fuzzers_dir, "..\\data\\js\\")
+						if $1 == 'logging.js'
 							file_path = File.expand_path(js_dir, "logging.js")
 							@@logging_js ||= File.open(file_path, "rb") {|f| f.read}
 							response.status          = 200
 							response['Content-Type'] = 'text/javascript'
-							response.body            = @@logging_js							
+							response.body            = @@logging_js
 						else
 							file_path = File.join(js_dir, File.basename($1))
 							if File.exists?(file_path)
@@ -146,12 +146,12 @@ module Grinder
 								response.status          = 200
 								response['Content-Type'] = 'text/javascript'
 								response.body            = js_file
+							else
+								# Nothing is found, return a 404
+								response.status = 404
+								response.body   = ''
 							end
 						end
-
-						# Nothing is found, return a 404
-						response.status = 404
-						response.body   = ''
 					elsif( request.path == '/testcase_generate' )
 						html                     = @@reductor ? @@reductor.testcase_generate : nil
 						response['Content-Type'] = 'text/html; charset=utf-8;'
