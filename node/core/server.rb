@@ -131,27 +131,16 @@ module Grinder
 						response.status          = 404
 						response['Content-Type'] = 'text/html'
 						response.body            = ''
-					elsif( request.path =~ /\/([\w\-. _]+\.js)$/ )
-						js_dir = File.join($fuzzers_dir, "..\\data\\js\\")
-						if $1 == 'logging.js'
-							file_path = File.expand_path(js_dir, "logging.js")
-							@@logging_js ||= File.open(file_path, "rb") {|f| f.read}
-							response.status          = 200
-							response['Content-Type'] = 'text/javascript'
-							response.body            = @@logging_js
-						else
-							file_path = File.join(js_dir, File.basename($1))
-							if File.exists?(file_path)
-								js_file = File.open(file_path, "rb") {|f| f.read}
-								response.status          = 200
-								response['Content-Type'] = 'text/javascript'
-								response.body            = js_file
-							else
-								# Nothing is found, return a 404
-								response.status = 404
-								response.body   = ''
-							end
-						end
+          elsif( request.path =~ /\/([\w\-. _]+\.js)$/ )
+            js = get_js($1)
+            if js.blank?
+              response.status = 404
+              response.body   = ''
+            else
+              response.status          = 200
+              response['Content-Type'] = 'text/javascript'
+              response.body            = js
+            end
 					elsif( request.path == '/testcase_generate' )
 						html                     = @@reductor ? @@reductor.testcase_generate : nil
 						response['Content-Type'] = 'text/html; charset=utf-8;'
@@ -205,8 +194,25 @@ module Grinder
 						response['Location']     = '/grinder'
 						response.body            = ''
 					end
-				end
-			end
+        end
+
+        private
+
+        def get_js(name)
+          js_dir = File.join($fuzzers_dir, "..\\data\\js\\")
+          file_path = File.join(js_dir, File.basename(name))
+          js = ""
+
+          if name == 'logging.js' && !@@logging_js.blank?
+            js = @@logging_js
+          elsif File.exists?(file_path)
+            js = File.open(file_path, "rb") {|f| f.read}
+            @@logging_js = js if name == 'logging.js'
+          end
+
+          js
+        end
+      end
 			
 			def initialize( address, port, browser=nil, fuzzer=nil, reduction=nil )
 				@address         = address
@@ -324,7 +330,7 @@ module Grinder
 					@dummy_websocket.close
 					@dummy_websocket = nil
 				end
-			end
+      end
 		end
 
 	end
