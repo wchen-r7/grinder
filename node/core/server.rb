@@ -131,16 +131,16 @@ module Grinder
 						response.status          = 404
 						response['Content-Type'] = 'text/html'
 						response.body            = ''
-          elsif( request.path =~ /\/([\w\-. _]+\.js)$/ )
-            js = get_js($1)
-            if js.empty?
-              response.status = 404
-              response.body   = ''
-            else
-              response.status          = 200
-              response['Content-Type'] = 'text/javascript'
-              response.body            = js
-            end
+					elsif( request.path =~ /\/([\w\-. _]+\.js)$/ )
+						js = get_js($1)
+						if js.empty?
+							response.status = 404
+							response.body   = ''
+						else
+							response.status          = 200
+							response['Content-Type'] = 'text/javascript'
+							response.body            = js
+						end
 					elsif( request.path == '/testcase_generate' )
 						html                     = @@reductor ? @@reductor.testcase_generate : nil
 						response['Content-Type'] = 'text/html; charset=utf-8;'
