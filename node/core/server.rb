@@ -194,25 +194,25 @@ module Grinder
 						response['Location']     = '/grinder'
 						response.body            = ''
 					end
-        end
+				end
 
-        private
+				private
 
-        def get_js(name)
-          js_dir = File.join($fuzzers_dir, "..\\data\\js\\")
-          file_path = File.join(js_dir, File.basename(name))
-          js = ""
+				def get_js(name)
+					js_dir = File.join($fuzzers_dir, "..\\data\\js\\")
+					file_path = File.join(js_dir, File.basename(name))
+					js = ""
 
-          if name == 'logging.js' && @@logging_js && !@@logging_js.empty?
-            js = @@logging_js
-          elsif File.exists?(file_path)
-            js = File.open(file_path, "rb") {|f| f.read}
-            @@logging_js = js if name == 'logging.js'
-          end
-
-          js
-        end
-      end
+					if name == 'logging.js' && @@logging_js && !@@logging_js.empty?
+						js = @@logging_js
+					elsif File.exists?(file_path)
+						js = File.open(file_path, "rb") {|f| f.read}
+						@@logging_js = js if name == 'logging.js'
+					end
+					
+					js
+				end
+			end
 			
 			def initialize( address, port, browser=nil, fuzzer=nil, reduction=nil )
 				@address         = address
@@ -330,7 +330,7 @@ module Grinder
 					@dummy_websocket.close
 					@dummy_websocket = nil
 				end
-      end
+			end
 		end
 
 	end
