@@ -133,7 +133,7 @@ module Grinder
 						response.body            = ''
           elsif( request.path =~ /\/([\w\-. _]+\.js)$/ )
             js = get_js($1)
-            if js.blank?
+            if js.empty?
               response.status = 404
               response.body   = ''
             else
@@ -203,7 +203,7 @@ module Grinder
           file_path = File.join(js_dir, File.basename(name))
           js = ""
 
-          if name == 'logging.js' && !@@logging_js.blank?
+          if name == 'logging.js' && @@logging_js && !@@logging_js.empty?
             js = @@logging_js
           elsif File.exists?(file_path)
             js = File.open(file_path, "rb") {|f| f.read}
